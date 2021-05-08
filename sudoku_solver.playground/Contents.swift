@@ -12,10 +12,8 @@ func satisfyBoard (board: [[Int]], num : Int, rowIndex : Int, colIndex : Int) ->
 
 func boardFull (board: [[Int]]) -> Bool {
     for row in board {
-        for val in row {
-            if val == 0 {
-                return false
-            }
+        if row.contains(0) {
+            return false 
         }
     }
     return true
