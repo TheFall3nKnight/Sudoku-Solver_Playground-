@@ -99,6 +99,8 @@ func solveBoard (board: [[Int]]) -> ([[Int]], Bool){
                     if satisfyBoard(board: newBoard, num: n, rowIndex: rowIndex, colIndex: colIndex) {
                         row[colIndex] = n
                         newBoard[rowIndex] = row
+                        print(row)
+                        print("----------------")
                         let status = solveBoard(board: newBoard)
                         if status.1 {
                             newBoard = status.0
@@ -121,15 +123,15 @@ func solveBoard (board: [[Int]]) -> ([[Int]], Bool){
 }
 
 var board = [ // Edit this list
-    [0, 0, 0, 5, 0, 6, 3, 0, 0],
-    [2, 0, 0, 0, 0, 3, 0, 0, 4],
-    [5, 6, 0, 0, 0, 0, 0, 8, 0],
-    [4, 7, 0, 2, 0, 0, 8, 0, 0],
-    [0, 0, 9, 7, 0, 0, 2, 0, 3],
-    [0, 3, 0, 0, 5, 4, 0, 1, 0],
-    [7, 0, 4, 8, 2, 0, 6, 0, 0],
-    [0, 2, 0, 0, 0, 0, 4, 0, 0],
-    [6, 1, 0, 0, 0, 0, 0, 0, 8],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
 ]
 
 var answer = solveBoard(board: board)
