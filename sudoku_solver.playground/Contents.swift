@@ -1,144 +1,53 @@
-func makeBoxes (board: [[Int]]) -> [[Int]] {
-    var boxes = [[Int]]()
-    var box1 = [Int]()
-    var box2 = [Int]()
-    var box3 = [Int]()
-    var index = 0
-    for row in board {
-        if index % 3 == 0 && index != 0{
-            boxes.append(box1);boxes.append(box2);boxes.append(box3)
-            box1 = [Int]()
-            box2 = [Int]()
-            box3 = [Int]()
-        }
-        box1 += row[0...2]
-        box2 += row[3...5]
-        box3 += row[6...8]
-        index += 1
-        if index == 9 {
-            boxes.append(box1);boxes.append(box2);boxes.append(box3)
-        }
-        
-    }
-    return boxes
-}
+func satisfyBoard (board : [[Int]], row : Int, column : Int, num : Int) -> Bool{
+    if board[row].contains(num) {return false}
 
-
-func satisfyBoard (board: [[Int]], num : Int, rowIndex : Int, colIndex : Int) -> Bool {
-    if board[rowIndex].contains(num) {
-        return false
-    }
-    for row in board {
-        if row[colIndex] == num {
-            return false
-        }
-    }
-    var boxNum = 0
-    if 0 <= rowIndex && rowIndex <= 2 {
-        if 0 <= colIndex && colIndex <= 2 {
-            boxNum = 0
-        }
-        else if 3 <= colIndex && colIndex <= 5 {
-            boxNum = 1
-        }
-        else if 6 <= colIndex && colIndex <= 8 {
-            boxNum = 2
-        }
-    }
-    else if 3 <= rowIndex && rowIndex <= 5 {
-        if 0 <= colIndex && colIndex <= 2 {
-            boxNum = 3
-        }
-        else if 3 <= colIndex && colIndex <= 5 {
-            boxNum = 4
-        }
-        else if 6 <= colIndex && colIndex <= 8 {
-            boxNum = 5
-        }
-    }
-    else if 6 <= rowIndex && rowIndex <= 8 {
-        if 0 <= colIndex && colIndex <= 2 {
-            boxNum = 6
-        }
-        else if 3 <= colIndex && colIndex <= 5 {
-            boxNum = 7
-        }
-        else if 6 <= colIndex && colIndex <= 8 {
-            boxNum = 8
-        }
-    }
-    let boxes = makeBoxes(board: board)
-    if boxes[boxNum].contains(num) {
-        return false
-    }
-    return true
-}
-
-func boardFull (board: [[Int]]) -> Bool {
-    for row in board {
-        if row.contains(0) {return false}
-    }
-    return true
-}
-
-func solveBoard (board: [[Int]]) -> ([[Int]], Bool){
-    var newBoard = board
-    if boardFull(board: newBoard) {
-        return (newBoard, true)
-    }
-    var rowIndex = 0
+    for row in board {if row[column] == num {return false}}
     
-    var value = 0
-    while rowIndex < newBoard.count {
-        var colIndex = 0
-        var row = newBoard[rowIndex]
-        while colIndex < row.count {
-            value = row[colIndex]
-            if value == 0 {
-                for n in 1...9 {
-                    if satisfyBoard(board: newBoard, num: n, rowIndex: rowIndex, colIndex: colIndex) {
-                        row[colIndex] = n
-                        newBoard[rowIndex] = row
-                        print(row)
-                        print("----------------")
-                        let status = solveBoard(board: newBoard)
-                        if status.1 {
-                            newBoard = status.0
-                            return (newBoard, true)
-                        }
-                        else {
-                            continue
-                        }
-                    }
-                    else if n == 9{
-                        return (newBoard, false)
+    let boxRow = (row / 3) * 3
+    let boxCol = (column / 3) * 3
+    
+    if board[boxRow][boxCol...boxCol + 2].contains(num) || board[boxRow + 1][boxCol...boxCol + 2].contains(num) || board[boxRow + 2][boxCol...boxCol + 2].contains(num) {return false}
+    
+    return true
+}
+
+func boardFull (board : [[Int]]) -> Bool {
+    for row in board {if row.contains(0) {return false}}
+    return true
+}
+
+func solveBoard (board : [[Int]]) -> [[Int]]{
+    var newBoard = board
+    for rNum in 0...8 {
+        for cNum in 0...8 {
+            if newBoard[rNum][cNum] == 0 {
+                for num in 1...9 {
+                    if satisfyBoard(board: newBoard, row: rNum, column: cNum, num: num) {
+                        newBoard[rNum][cNum] = num
+                        newBoard = solveBoard(board: newBoard)
+                        if boardFull(board: newBoard) {break}
+                        newBoard[rNum][cNum] = 0
                     }
                 }
+                return newBoard
             }
-            colIndex += 1
         }
-        rowIndex += 1
     }
-    return (newBoard, true)
+    return newBoard
 }
 
 var board = [ // Edit this list
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 3, 0, 0, 8, 0, 7],
+    [0, 0, 8, 0, 0, 0, 9, 0, 0],
+    [0, 2, 0, 1, 0, 0, 0, 4, 0],
+    [0, 1, 0, 5, 0, 0, 0, 0, 0],
+    [5, 0, 9, 7, 0, 8, 3, 0, 1],
+    [0, 0, 0, 0, 0, 6, 0, 7, 0],
+    [0, 5, 0, 0, 0, 7, 0, 8, 0],
+    [0, 0, 3, 0, 0, 0, 2, 0, 0],
+    [1, 0, 6, 0, 0, 2, 0, 0, 0],
 ]
 
 var answer = solveBoard(board: board)
-var newAnswer = answer.0
-if !boardFull(board: newAnswer) {
-    print("No Solution")
-}
-for row in newAnswer {
-    print(row)
-}
+for row in answer {print(row)}
+
